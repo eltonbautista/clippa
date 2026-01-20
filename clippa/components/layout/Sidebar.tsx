@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 bg-white border-r p-4">
+    <aside className="w-64 bg-charcoal border-r p-4">
       <nav className="space-y-2">
         <Link href="/uploads" className="block">
           Uploads
