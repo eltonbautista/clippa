@@ -5,6 +5,7 @@ export interface IVideoUpload {
   url: string;
   uploadedAt: Date;
   status: 'uploaded' | 'processing' | 'completed';
+  duration?: number;
 }
 
 const mockVideoUploads: IVideoUpload[] = [
@@ -15,6 +16,7 @@ const mockVideoUploads: IVideoUpload[] = [
     url: 'https://example.com/video1.mp4',
     uploadedAt: new Date('2024-01-01T10:00:00Z'),
     status: 'uploaded',
+    duration: 120,
   },
   {
     id: '2',
@@ -23,6 +25,7 @@ const mockVideoUploads: IVideoUpload[] = [
     url: 'https://example.com/video2.mp4',
     uploadedAt: new Date('2024-02-15T12:30:00Z'),
     status: 'processing',
+    duration: 90,
   },
   {
     id: '3',
@@ -31,6 +34,7 @@ const mockVideoUploads: IVideoUpload[] = [
     url: 'https://example.com/video3.mp4',
     uploadedAt: new Date('2024-03-20T09:15:00Z'),
     status: 'uploaded',
+    duration: 150,
   },
   {
     id: '4',
@@ -39,6 +43,7 @@ const mockVideoUploads: IVideoUpload[] = [
     url: 'https://example.com/video4.mp4',
     uploadedAt: new Date('2024-04-10T14:45:00Z'),
     status: 'uploaded',
+    duration: 200,
   }
 ];
 

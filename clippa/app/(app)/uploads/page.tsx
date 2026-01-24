@@ -1,11 +1,11 @@
 "use client";
 
-import { useUploads } from '@/hooks/useUploads';
+import { useUploadsSimple } from '@/hooks/useUploadsSimple';
 import Table from '@/components/ui/Table';
 import TableItem from '@/components/ui/TableItem';
 
 export default function UploadsPage() {
-  const { uploads, startProcessing } = useUploads();
+  const { uploads, startProcessing } = useUploadsSimple();
 
   const uploadsItems = uploads.map(upload => {
     const createdDate = upload.uploadedAt.toISOString().split('T')[0];
@@ -25,8 +25,8 @@ export default function UploadsPage() {
   })
 
   return (
-    <div className="bg-gray-100">
-      <h1 className="text-xl font-semibold text-blue-500">Uploads</h1>
+    <div className="bg-gray-200">
+      <h1 className="text-xl font-semibold text-blue-500 p-4">Uploads Clip Generation</h1>
       <Table>
         {uploadsItems}
       </Table>
