@@ -10,6 +10,9 @@ export default function Sidebar() {
         <Link href="/uploads/new" className="block">
           New Upload
         </Link>
+        <Link href="/uploads/1" className="block">
+          Upload 1
+        </Link>
         <Link href="/settings" className="block">
           Settings
         </Link>

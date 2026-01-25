@@ -1,8 +1,9 @@
 "use client";
 
 import { useParams } from 'next/navigation';
-import { useUploadsSimple } from '@/hooks/useUploadsSimple';
+// import { useUploadsSimple } from '@/hooks/useUploadsSimple';
 import { useState } from 'react';
+import { useUploads } from '@/context/UploadsProvider';
 
 export interface IClip {
   id: string;
@@ -20,26 +21,30 @@ function createInitialClips(uploadId: string): IClip[] {
       uploadId,
       name: "Clip 1",
       duration: 30,
-      status: "ready",
+      status: "uploaded",
     },
     {
       id: "clip-2",
       uploadId,
       name: "Clip 2",
       duration: 45,
-      status: "ready",
+      status: "error",
     },
   ];
 }
 
 export default function UploadDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { uploads } = useUploadsSimple();
+  const { uploads } = useUploads();
 
   const [clips, setClips] = useState<IClip[]>(() => createInitialClips(id));
   const [clipDuration, setClipDuration] = useState<number>(15);
 
   const upload = uploads.find(u => u.id === id);
+
+  if (!upload) {
+    return <div>Upload not found</div>;
+  }
   
   const handleAddClip = () => {
     const newClip: IClip = {
@@ -52,9 +57,36 @@ export default function UploadDetailPage() {
     setClips([...clips, newClip]);
   }
 
-  if (!upload) {
-    return <div>Upload not found</div>;
-  }
+  const handleUploadClip = (clipId: string) => {
+    setClips(prev =>
+      prev.map(c =>
+        c.id === clipId ? { ...c, status: "uploading" } : c
+      )
+    );
+
+    setTimeout(() => {
+      setClips(prev =>
+        prev.map(c =>
+          c.id === clipId ? { ...c, status: "uploaded" } : c
+        )
+      );
+    }, 2000);
+  };
+
+  const determineClipStatus = (status: 'ready' | 'uploading' | 'uploaded' | 'error') => {
+    switch (status) {
+      case 'ready':
+        return 'Ready to upload';
+      case 'uploading':
+        return 'Uploading...';
+      case 'uploaded':
+        return 'Uploaded';
+      case 'error':
+        return 'Error during upload';
+      default:
+        return '';
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -87,6 +119,17 @@ export default function UploadDetailPage() {
                 <h3 className="font-medium text-gray-800">{clip.name}</h3>
                 <p className="text-gray-600">Duration: {clip.duration} seconds</p>
                 <p className="text-gray-600">Status: {clip.status}</p>
+                <button
+                  className={`px-3 py-1 rounded ${
+                    clip.status === "ready" ? "bg-blue-500 text-white" :
+                    clip.status === "uploading" ? "bg-gray-300 text-gray-600" :
+                    "bg-green-500 text-white"
+                  }`}
+                  disabled={clip.status !== "ready"}
+                  onClick={() => handleUploadClip(clip.id)}
+                >
+                  {determineClipStatus(clip.status)}
+                </button>
               </li>
             ))}
           </ul>

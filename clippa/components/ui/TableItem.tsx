@@ -1,5 +1,7 @@
-export default function TableItem({ fileName, status, created, children }:
-  { fileName: string; status: string; created: string; children: React.ReactNode }) {
+import Link from "next/link";
+
+export default function TableItem({ id, fileName, status, created, children }:
+  { id: string; fileName: string; status: string; created: string; children: React.ReactNode }) {
   
   const getStatusStyles = (status: string) => {
     switch (status.toLowerCase()) {
@@ -21,7 +23,11 @@ export default function TableItem({ fileName, status, created, children }:
 
   return (
     <tr className="hover:bg-gray-50">
-      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{fileName}</td>
+      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        <Link href={`/uploads/${id}`}>
+          {fileName}
+        </Link>
+      </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">email@example.com</td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusStyles(status)}`}>
