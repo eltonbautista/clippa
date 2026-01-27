@@ -21,7 +21,7 @@ function createInitialClips(uploadId: string): IClip[] {
       uploadId,
       name: "Clip 1",
       duration: 30,
-      status: "uploaded",
+      status: "ready",
     },
     {
       id: "clip-2",
@@ -31,6 +31,10 @@ function createInitialClips(uploadId: string): IClip[] {
       status: "error",
     },
   ];
+}
+
+const getRandomInt = (max: number) => {
+  return Math.floor(Math.random() * max);
 }
 
 export default function UploadDetailPage() {
@@ -56,7 +60,7 @@ export default function UploadDetailPage() {
     }
     setClips([...clips, newClip]);
   }
-
+  
   const handleUploadClip = (clipId: string) => {
     setClips(prev =>
       prev.map(c =>
@@ -65,15 +69,17 @@ export default function UploadDetailPage() {
     );
 
     setTimeout(() => {
+      const isSuccess = getRandomInt(100) < 80;
+      
       setClips(prev =>
         prev.map(c =>
-          c.id === clipId ? { ...c, status: "uploaded" } : c
+          c.id === clipId ? { ...c, status: isSuccess ? "uploaded" : "error" } : c
         )
       );
     }, 2000);
   };
 
-  const determineClipStatus = (status: 'ready' | 'uploading' | 'uploaded' | 'error') => {
+  const getClipStatusLabel = (status: 'ready' | 'uploading' | 'uploaded' | 'error') => {
     switch (status) {
       case 'ready':
         return 'Ready to upload';
@@ -95,7 +101,8 @@ export default function UploadDetailPage() {
         <p className="text-gray-700">Status: {upload.status}</p>
         <p className="text-gray-700">Created: {new Date(upload.uploadedAt).toLocaleString()}</p>
         <button
-          className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
+          className={`mt-4 px-4 py-2 bg-green-500 text-white rounded ${upload.status !== 'completed' ? 'bg-red-500 cursor-not-allowed' : ''}`}
+          disabled={upload.status !== 'completed'}
           onClick={handleAddClip}
         >
           Add Clip
@@ -108,7 +115,7 @@ export default function UploadDetailPage() {
           placeholder="Duration in seconds"
         />
       </section>
-      <section>
+      { upload.status === 'completed' ? <section>
         <h2 className="text-lg font-semibold text-blue-400 mb-4">Clips</h2>
         {clips.length === 0 ? (
           <p className="text-gray-500">No clips available.</p>
@@ -128,15 +135,43 @@ export default function UploadDetailPage() {
                   disabled={clip.status !== "ready"}
                   onClick={() => handleUploadClip(clip.id)}
                 >
-                  {determineClipStatus(clip.status)}
+                  {getClipStatusLabel(clip.status)}
                 </button>
+                {clip.status === 'error' && (
+                  <div>
+                    <p className="text-red-600 mt-2">There was an error uploading this clip. Please try again.</p>
+                    <button
+                      className="mt-2 px-3 py-1 bg-red-500 text-white rounded"
+                      onClick={() => handleUploadClip(clip.id)}
+                    >
+                      Retry
+                    </button>
+                  </div>
+                )}
               </li>
             ))}
           </ul>
         )}
-      </section>
+      </section> : <section>
+          {upload.status === "processing" && (
+  <div className="rounded-md border border-yellow-300 bg-yellow-50 p-4 text-yellow-800">
+    <p className="font-medium">Processing video…</p>
+    <p className="text-sm">
+      Your video is being processed. Clips will be available once this finishes.
+    </p>
+  </div>
+)}
 
-      {/* Clips section comes next */}
+        {upload.status === "uploaded" && (
+          <div className="rounded-md border border-blue-300 bg-blue-50 p-4 text-blue-800">
+            <p className="font-medium">Ready to process</p>
+            <p className="text-sm">
+              Click “Process” on the uploads page to generate clips.
+            </p>
+          </div>
+        )}
+
+        </section>}
     </div>
   );
 }
