@@ -8,8 +8,6 @@ type UploadsContextType = {
   startProcessing: (id: string) => void;
 }
 
-console.log('mockData in UploadsProvider:', mockData);
-
 const UploadsContext = createContext<UploadsContextType | undefined>(undefined);
 
 export function UploadsProvider({ children }: { children: React.ReactNode }) {

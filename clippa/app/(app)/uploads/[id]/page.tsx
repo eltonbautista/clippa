@@ -4,15 +4,9 @@ import { useParams } from 'next/navigation';
 // import { useUploadsSimple } from '@/hooks/useUploadsSimple';
 import { useState } from 'react';
 import { useUploads } from '@/context/UploadsProvider';
+import { IClip } from '@/lib/types';
 
-export interface IClip {
-  id: string;
-  uploadId: string;
-  name: string;
-  duration: number;
-  thumbnailUrl?: string;
-  status: "ready" | "uploading" | "uploaded" | "error";
-}
+import ClipItem from '@/components/ui/ClipItem';
 
 function createInitialClips(uploadId: string): IClip[] {
   return [
@@ -32,6 +26,12 @@ function createInitialClips(uploadId: string): IClip[] {
     },
   ];
 }
+
+const errorReasons = [
+  "Network error",
+  "Upload timed out",
+  "Invalid clip duration",
+];
 
 const getRandomInt = (max: number) => {
   return Math.floor(Math.random() * max);
@@ -73,7 +73,7 @@ export default function UploadDetailPage() {
       
       setClips(prev =>
         prev.map(c =>
-          c.id === clipId ? { ...c, status: isSuccess ? "uploaded" : "error" } : c
+          c.id === clipId ? { ...c, status: isSuccess ? "uploaded" : "error", errorReason: isSuccess ? undefined : errorReasons[getRandomInt(errorReasons.length)] } : c
         )
       );
     }, 2000);
@@ -123,31 +123,7 @@ export default function UploadDetailPage() {
           <ul className="space-y-4">
             {clips.map(clip => (
               <li key={clip.id} className="p-4 border rounded shadow-sm">
-                <h3 className="font-medium text-gray-800">{clip.name}</h3>
-                <p className="text-gray-600">Duration: {clip.duration} seconds</p>
-                <p className="text-gray-600">Status: {clip.status}</p>
-                <button
-                  className={`px-3 py-1 rounded ${
-                    clip.status === "ready" ? "bg-blue-500 text-white" :
-                    clip.status === "uploading" ? "bg-gray-300 text-gray-600" :
-                    "bg-green-500 text-white"
-                  }`}
-                  disabled={clip.status !== "ready"}
-                  onClick={() => handleUploadClip(clip.id)}
-                >
-                  {getClipStatusLabel(clip.status)}
-                </button>
-                {clip.status === 'error' && (
-                  <div>
-                    <p className="text-red-600 mt-2">There was an error uploading this clip. Please try again.</p>
-                    <button
-                      className="mt-2 px-3 py-1 bg-red-500 text-white rounded"
-                      onClick={() => handleUploadClip(clip.id)}
-                    >
-                      Retry
-                    </button>
-                  </div>
-                )}
+                <ClipItem clip={clip} handleUploadClip={handleUploadClip} getClipStatusLabel={getClipStatusLabel} />
               </li>
             ))}
           </ul>
