@@ -1,3 +1,5 @@
+import { IClip } from "./types";
+
 export interface IVideoUpload {
   id: string;
   title: string;
@@ -6,6 +8,7 @@ export interface IVideoUpload {
   uploadedAt: Date;
   status: 'uploaded' | 'processing' | 'completed';
   duration?: number;
+  clips?: IClip[];
 }
 
 const mockVideoUploads: IVideoUpload[] = [
@@ -35,6 +38,22 @@ const mockVideoUploads: IVideoUpload[] = [
     uploadedAt: new Date('2024-03-20T09:15:00Z'),
     status: 'uploaded',
     duration: 150,
+    clips: [
+      {
+        id: "clip-1",
+        uploadId: '3',
+        name: "Clip 1",
+        duration: 30,
+        status: "ready",
+      },
+      {
+        id: "clip-2",
+        uploadId: '3',
+        name: "Clip 2",
+        duration: 45,
+        status: "error",
+      },
+    ]
   },
   {
     id: '4',
