@@ -34,6 +34,10 @@ export function UploadsProvider({ children }: { children: React.ReactNode }) {
   };
 
   const deleteUpload = (id: string) => {
+    const confirmation = window.confirm("Are you sure you want to delete this upload?");
+
+    if (!confirmation) return;
+
     setUploads(prevUploads => prevUploads.filter(upload => upload.id !== id));
   }
 
